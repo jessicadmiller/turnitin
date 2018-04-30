@@ -11,3 +11,12 @@
 ### PhraseOccurrence
 
 
+## Running The Applications
+
+From the command line, run the following commands
+
+```sh
+$> cd /path/to/project
+$> mvn clean package
+$> java -jar target/*.jar
+```
