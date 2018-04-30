@@ -11,7 +11,7 @@
 ### PhraseOccurrence
 
 
-## Running The Applications
+## Running The Application
 
 From the command line, run the following commands
 
