@@ -2,6 +2,10 @@ package com.turnitin;
 
 public class Application {
 
+    /**
+     * TODO: PROVIDE DOCUMENTATION
+     * @author Jessica Miller <jessica.dressler@gmail.com>
+     */
     public static void main(String[] args) {
 
         System.out.println("\nProblem 1\n");
@@ -12,10 +16,10 @@ public class Application {
 
         System.out.println(text);
 
-        StringFinder stringFinder = new StringFinder(text);
+        PhraseFinder stringFinder = new PhraseFinder(text);
 
-        for (Phrase phrase : stringFinder.getPhrases()) {
-            System.out.println(phrase.getPhraseName() + " : " + phrase.getPhraseCount());
+        for (PhraseOccurrence phrase : stringFinder.getPhrases()) {
+            System.out.println(phrase.getPhrase() + " : " + phrase.getOccurrenceCount());
         }
 
         System.out.println("\nProblem 2\n");
