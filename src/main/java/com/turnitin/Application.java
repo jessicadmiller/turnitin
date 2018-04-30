@@ -1,4 +1,6 @@
-public class Main {
+package com.turnitin;
+
+public class Application {
 
     public static void main(String[] args) {
 
@@ -7,13 +9,13 @@ public class Main {
         String text = "Afterward, a yellow bird landed on the tall tree in addition to a lazy tortoise.  " +
                 "However, he had a red beak. In addition to white the patches on the wings, he was completely yellow. " +
                 "In summary, it was yellow bird. In summary, it did not sing.";
+
         System.out.println(text);
 
-        StringFinderClass stringFinder = new StringFinderClass(text);
+        StringFinder stringFinder = new StringFinder(text);
 
-        for(PhraseClass phrase : stringFinder.getPhrases()){
+        for (Phrase phrase : stringFinder.getPhrases()) {
             System.out.println(phrase.getPhraseName() + " : " + phrase.getPhraseCount());
-
         }
 
         System.out.println("\nProblem 2\n");
@@ -24,13 +26,13 @@ public class Main {
         stringFinder.countInstances();
         stringFinder.getDistinct();
 
-        for(String phrase : stringFinder.getVocabulary()){
+        for (String phrase : stringFinder.getVocabulary()) {
             System.out.print(phrase + ", ");
         }
 
         System.out.println("");
 
-        for(int count : stringFinder.getVector()){
+        for (int count : stringFinder.getVector()) {
             System.out.print(count + ", ");
         }
 
