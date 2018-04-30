@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 public class PhraseFinder {
 
     /**
-     * Static values of phrases
-     * todo: should probably have phrases get passed into here from application - makes this more reusable.
+     * Static values of phraseOccurrences
+     * todo: should probably have phraseOccurrences get passed into here from application - makes this more reusable.
      */
     private static Map<String, List<String>> PHRASES = new HashMap<>();
 
@@ -27,8 +27,8 @@ public class PhraseFinder {
 
     /** subject sentence */
     private String sentence;
-    /** List of phrases occurrences in the sentence */
-    private List<PhraseOccurrence> phrases;
+    /** List of phraseOccurrences occurrences in the sentence */
+    private List<PhraseOccurrence> phraseOccurrences;
 
     private List<String> vocabulary;
     private List<Integer> vector;
@@ -46,12 +46,12 @@ public class PhraseFinder {
     public String getSentence() {
         return sentence;
     }
-    public void setPhrases(List<PhraseOccurrence> phrases) {
-        this.phrases = phrases;
+    public void setPhraseOccurrences(List<PhraseOccurrence> phraseOccurrences) {
+        this.phraseOccurrences = phraseOccurrences;
     }
 
-    public List<PhraseOccurrence> getPhrases() {
-        return phrases;
+    public List<PhraseOccurrence> getPhraseOccurrences() {
+        return phraseOccurrences;
     }
     public void setVocabulary(List<String> vocabulary) {
         this.vocabulary = vocabulary;
@@ -81,7 +81,7 @@ public class PhraseFinder {
     public void setupPhraseModel() {
         List<PhraseOccurrence> phrasesToFind = new ArrayList<>();
 
-        //Iterating over the hashmap of phrases
+        //Iterating over the hashmap of phraseOccurrences
         Iterator it = PHRASES.entrySet().iterator();
 
         while (it.hasNext()) {
@@ -92,7 +92,7 @@ public class PhraseFinder {
             it.remove();
         }
 
-        this.phrases = phrasesToFind;
+        this.phraseOccurrences = phrasesToFind;
     }
 
     /**
@@ -100,14 +100,14 @@ public class PhraseFinder {
      */
     public void clearPhraseModel() {
         List<PhraseOccurrence> phrases = new ArrayList<>();
-        if (this.phrases.size() == 0) {
+        if (this.phraseOccurrences.size() == 0) {
             return;
         }
-        for (PhraseOccurrence phrase : this.phrases) {
+        for (PhraseOccurrence phrase : this.phraseOccurrences) {
             phrase.setOccurrenceCount(0);
             phrases.add(phrase);
         }
-        this.phrases = phrases;
+        this.phraseOccurrences = phrases;
     }
 
     /**
@@ -115,8 +115,8 @@ public class PhraseFinder {
      */
     public void countInstances() {
         String normalizedSentence = this.sentence.toLowerCase();
-        // Stepping through the phrases to find in the sentence
-        for (PhraseOccurrence phrase : this.phrases) {
+        // Stepping through the phraseOccurrences to find in the sentence
+        for (PhraseOccurrence phrase : this.phraseOccurrences) {
             //Finding the first index of the phrase
             int position = normalizedSentence.indexOf(phrase.getPhrase());
 
@@ -150,10 +150,10 @@ public class PhraseFinder {
     }
 
     /**
-     * Handling removing any duplicates of phrases
+     * Handling removing any duplicates of phraseOccurrences
      */
     public void getDistinct() {
-        List<PhraseOccurrence> distinctPhrases = phrases.stream().filter(distinctByKey(p -> p.getPhrase()))
+        List<PhraseOccurrence> distinctPhrases = phraseOccurrences.stream().filter(distinctByKey(p -> p.getPhrase()))
                 .collect(Collectors.toList());
 
         List<String> vocabulary = new ArrayList<>();

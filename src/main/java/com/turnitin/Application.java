@@ -18,7 +18,7 @@ public class Application {
 
         PhraseFinder stringFinder = new PhraseFinder(text);
 
-        for (PhraseOccurrence phrase : stringFinder.getPhrases()) {
+        for (PhraseOccurrence phrase : stringFinder.getPhraseOccurrences()) {
             System.out.println(phrase.getPhrase() + " : " + phrase.getOccurrenceCount());
         }
 

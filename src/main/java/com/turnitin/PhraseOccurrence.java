@@ -14,6 +14,10 @@ public class PhraseOccurrence {
         setPhrase(name);
     }
 
+    public PhraseOccurrence(String name) {
+        this(name, 0);
+    }
+
     public void setPhrase(String phrase) {
         this.phrase = phrase;
     }
