@@ -71,15 +71,15 @@ public class PhraseFinder {
 
     public PhraseFinder(String sentence) {
         this.sentence = sentence;
-        this.setupPhraseModel();
+        this.initializePhrazeOccurrences();
         this.countInstances();
     }
 
     /**
-     * Get the model setup to handle the word counts.
+     * Creates a zero count for every phase in our watchlist
      */
-    public void setupPhraseModel() {
-        List<PhraseOccurrence> phrasesToFind = new ArrayList<>();
+    public void initializePhrazeOccurrences() {
+        List<PhraseOccurrence> occurrences = new ArrayList<>();
 
         //Iterating over the hashmap of phraseOccurrences
         Iterator it = PHRASES.entrySet().iterator();
@@ -88,11 +88,11 @@ public class PhraseFinder {
             Map.Entry pair = (Map.Entry) it.next();
             // Splitting the words up into a model and adding to the phrase list.
             // todo: remove toString to avoid complexity in splitWords
-            phrasesToFind.addAll(splitWords(pair.getValue().toString()));
+            occurrences.addAll(splitWords(pair.getValue().toString()));
             it.remove();
         }
 
-        this.phraseOccurrences = phrasesToFind;
+        setPhraseOccurrences(occurrences);
     }
 
     /**
@@ -116,17 +116,17 @@ public class PhraseFinder {
     public void countInstances() {
         String normalizedSentence = this.sentence.toLowerCase();
         // Stepping through the phraseOccurrences to find in the sentence
-        for (PhraseOccurrence phrase : this.phraseOccurrences) {
+        for (PhraseOccurrence occurrence : this.phraseOccurrences) {
             //Finding the first index of the phrase
-            int position = normalizedSentence.indexOf(phrase.getPhrase());
+            int position = normalizedSentence.indexOf(occurrence.getPhrase());
 
             // Stepping through the rest of the string to find any other instances
             // of the word.
             while (position >= 0) {
-                position = normalizedSentence.indexOf(phrase.getPhrase(), position);
+                position = normalizedSentence.indexOf(occurrence.getPhrase(), position);
 
                 if (position >= 0) {
-                    phrase.setOccurrenceCount(phrase.getOccurrenceCount() + 1);
+                    occurrence.setOccurrenceCount(occurrence.getOccurrenceCount() + 1);
                     position++;
                 }
             }
@@ -151,9 +151,11 @@ public class PhraseFinder {
 
     /**
      * Handling removing any duplicates of phraseOccurrences
+     * todo: getter behavior really setter. rethink name
      */
     public void getDistinct() {
-        List<PhraseOccurrence> distinctPhrases = phraseOccurrences.stream().filter(distinctByKey(p -> p.getPhrase()))
+        List<PhraseOccurrence> distinctPhrases = phraseOccurrences.stream()
+                .filter(distinctByKey(p -> p.getPhrase()))
                 .collect(Collectors.toList());
 
         List<String> vocabulary = new ArrayList<>();
@@ -164,8 +166,8 @@ public class PhraseFinder {
             vector.add(phrase.getOccurrenceCount());
         }
 
-        this.vocabulary = vocabulary;
-        this.vector = vector;
+        this.setVocabulary(vocabulary);
+        this.setVector(vector);
     }
 
     /**
