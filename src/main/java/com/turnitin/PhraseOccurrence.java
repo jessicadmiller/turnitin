@@ -2,6 +2,7 @@ package com.turnitin;
 
 /**
  * Model representing a given phrase and the number of occurrences found in a sentence
+ *
  * @author Jessica Miller <jessica.dressler@gmail.com>
  */
 public class PhraseOccurrence {
@@ -21,6 +22,7 @@ public class PhraseOccurrence {
     public void setPhrase(String phrase) {
         this.phrase = phrase;
     }
+
     public String getPhrase() {
         return phrase;
     }
@@ -28,6 +30,7 @@ public class PhraseOccurrence {
     public void setOccurrenceCount(int occurrenceCount) {
         this.occurrenceCount = occurrenceCount;
     }
+
     public int getOccurrenceCount() {
         return occurrenceCount;
     }

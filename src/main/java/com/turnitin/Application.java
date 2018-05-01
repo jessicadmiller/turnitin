@@ -30,7 +30,7 @@ public class Application {
 
         System.out.println(text);
 
-        PhraseFinder stringFinder = new PhraseFinder(text,PHRASES,false);
+        PhraseFinder stringFinder = new PhraseFinder(text,PHRASES);
         PhraseFinderResult resultsProblem1 = stringFinder.getPhraseFinderResult();
 
 
@@ -43,7 +43,7 @@ public class Application {
         String textProblem2 = "So, I have not seen this. So, usually, I don't follow all trends.";
         System.out.println(textProblem2);
 
-        PhraseFinder stringFinder2 = new PhraseFinder(textProblem2,PHRASES,true);
+        PhraseFinder stringFinder2 = new PhraseFinder(textProblem2,PHRASES);
         PhraseFinderResult resultsProblem2 = stringFinder2.getPhraseFinderResult();
 
         for (String phrase : resultsProblem2.getVocabulary()) {
