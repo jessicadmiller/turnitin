@@ -1,10 +1,7 @@
 package com.turnitin;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.List;
 
 /**
  * TODO: PROVIDE DOCUMENTATION
@@ -12,26 +9,11 @@ import java.util.stream.Collectors;
  */
 public class PhraseFinder {
 
-    /**
-     * Static values of phraseOccurrences
-     * todo: should probably have phraseOccurrences get passed into here from application - makes this more reusable.
-     */
-    private static Map<String, List<String>> PHRASES = new HashMap<>();
-
-    static {
-        PHRASES.put("1", Arrays.asList("afterward", "whenever", "however", "until", "as soon as", "as long as", "while", "again", "also", "besides"));
-        PHRASES.put("2", Arrays.asList("therefore", "thus", "consequently", "as a result", "for this reason", "so", "so that", "accordingly", "because"));
-        PHRASES.put("3", Arrays.asList("in addition to", "so", "moreover"));
-        PHRASES.put("4", Arrays.asList("in general", "for the most part", "as a general rule", "on the whole", "usually", "typically", "in summary"));
-    }
 
     /** subject sentence */
     private String sentence;
-    /** List of phraseOccurrences occurrences in the sentence */
-    private List<PhraseOccurrence> phraseOccurrences;
-
-    private List<String> vocabulary;
-    private List<Integer> vector;
+    private Map<String, List<String>> allPhrases;
+    private PhraseFinderResult phraseFinderResult;
 
     /**
      * Sets the subject sentence
@@ -40,141 +22,22 @@ public class PhraseFinder {
      */
     public void setSentence(String sentence) {
         this.sentence = sentence;
-        this.clearPhraseModel();
+
     }
 
     public String getSentence() {
         return sentence;
     }
-    public void setPhraseOccurrences(List<PhraseOccurrence> phraseOccurrences) {
-        this.phraseOccurrences = phraseOccurrences;
-    }
 
-    public List<PhraseOccurrence> getPhraseOccurrences() {
-        return phraseOccurrences;
-    }
-    public void setVocabulary(List<String> vocabulary) {
-        this.vocabulary = vocabulary;
-    }
-
-    public List<String> getVocabulary() {
-        return this.vocabulary;
-    }
-    public void setVector(List<Integer> vector) {
-        this.vector = vector;
-    }
-
-    public List<Integer> getVector() {
-        return this.vector;
+    public PhraseFinderResult getPhraseFinderResult(){
+        return this.phraseFinderResult;
     }
 
 
-    public PhraseFinder(String sentence) {
+    public PhraseFinder(String sentence,Map<String, List<String>> phrases, boolean distinctList) {
         this.sentence = sentence;
-        this.initializePhrazeOccurrences();
-        this.countInstances();
-    }
+        this.allPhrases = phrases;
 
-    /**
-     * Creates a zero count for every phase in our watchlist
-     */
-    public void initializePhrazeOccurrences() {
-        List<PhraseOccurrence> occurrences = new ArrayList<>();
-
-        //Iterating over the hashmap of phraseOccurrences
-        Iterator it = PHRASES.entrySet().iterator();
-
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-            // Splitting the words up into a model and adding to the phrase list.
-            // todo: remove toString to avoid complexity in splitWords
-            occurrences.addAll(splitWords(pair.getValue().toString()));
-            it.remove();
-        }
-
-        setPhraseOccurrences(occurrences);
-    }
-
-    /**
-     * If there is a new sentence clear counts
-     */
-    public void clearPhraseModel() {
-        List<PhraseOccurrence> phrases = new ArrayList<>();
-        if (this.phraseOccurrences.size() == 0) {
-            return;
-        }
-        for (PhraseOccurrence phrase : this.phraseOccurrences) {
-            phrase.setOccurrenceCount(0);
-            phrases.add(phrase);
-        }
-        this.phraseOccurrences = phrases;
-    }
-
-    /**
-     * This will do the parsing and counting of the sentence
-     */
-    public void countInstances() {
-        String normalizedSentence = this.sentence.toLowerCase();
-        // Stepping through the phraseOccurrences to find in the sentence
-        for (PhraseOccurrence occurrence : this.phraseOccurrences) {
-            //Finding the first index of the phrase
-            int position = normalizedSentence.indexOf(occurrence.getPhrase());
-
-            // Stepping through the rest of the string to find any other instances
-            // of the word.
-            while (position >= 0) {
-                position = normalizedSentence.indexOf(occurrence.getPhrase(), position);
-
-                if (position >= 0) {
-                    occurrence.setOccurrenceCount(occurrence.getOccurrenceCount() + 1);
-                    position++;
-                }
-            }
-        }
-    }
-
-    /**
-     * Parsing the sentence and replacing any characters that are not part of the word.
-     */
-    public List<PhraseOccurrence> splitWords(String wordList) {
-        List<PhraseOccurrence> phrasesToFind = new ArrayList<>();
-        // todo: fix associated with above todo
-        wordList = wordList.replace('[', ' ');
-        wordList = wordList.replace(']', ' ');
-        String[] words = wordList.split(",");
-        for (String w : words) {
-            w = w.trim().toLowerCase();
-            phrasesToFind.add(new PhraseOccurrence(w, 0));
-        }
-        return phrasesToFind;
-    }
-
-    /**
-     * Handling removing any duplicates of phraseOccurrences
-     * todo: getter behavior really setter. rethink name
-     */
-    public void getDistinct() {
-        List<PhraseOccurrence> distinctPhrases = phraseOccurrences.stream()
-                .filter(distinctByKey(p -> p.getPhrase()))
-                .collect(Collectors.toList());
-
-        List<String> vocabulary = new ArrayList<>();
-        List<Integer> vector = new ArrayList<>();
-
-        for (PhraseOccurrence phrase : distinctPhrases) {
-            vocabulary.add(phrase.getPhrase());
-            vector.add(phrase.getOccurrenceCount());
-        }
-
-        this.setVocabulary(vocabulary);
-        this.setVector(vector);
-    }
-
-    /**
-     * Ensures that a property exists in a given list only once
-     */
-    public static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
-        Map<Object, Boolean> map = new ConcurrentHashMap<>();
-        return t -> map.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+        this.phraseFinderResult = new PhraseFinderResult(phrases,sentence,distinctList);
     }
 }
